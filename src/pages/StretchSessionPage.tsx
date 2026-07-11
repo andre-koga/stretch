@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { BackLink } from '../components/BackLink'
 import { Button } from '../components/Button'
+import { PoseIllustration } from '../components/PoseIllustration'
 import { ProgressBar } from '../components/ProgressBar'
 import { playChime } from '../features/audio/ambient'
 import { formatClock, useSessionTimer } from '../features/timer/useSessionTimer'
@@ -85,6 +86,9 @@ export function StretchSessionPage() {
     (poseIndex + (1 - timer.remainingMs / Math.max(timer.durationMs, 1))) /
     routine.poses.length
 
+  const elapsedMs = Math.max(0, timer.durationMs - timer.remainingMs)
+  const alternate = Boolean(pose.alternateKey) && Math.floor(elapsedMs / 4000) % 2 === 1
+
   const goPrev = () => {
     if (poseIndex === 0) {
       timer.start(pose.durationSec * 1000)
@@ -124,16 +128,26 @@ export function StretchSessionPage() {
         className="animate-fade-up flex flex-1 flex-col items-center justify-center text-center"
         key={pose.id}
       >
+        <PoseIllustration
+          imageKey={pose.imageKey}
+          alternateKey={pose.alternateKey}
+          alternate={alternate}
+          side={pose.side}
+          name={pose.name}
+          className="mb-2"
+        />
         <p className="text-sm uppercase tracking-[0.18em] text-ink-muted">
           {pose.side && pose.side !== 'both' ? pose.side : 'hold'}
         </p>
-        <h1 className="mt-3 font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+        <h1 className="mt-2 font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
           {pose.name}
         </h1>
         {pose.cue ? (
-          <p className="mt-4 max-w-xs text-base leading-relaxed text-ink-muted">{pose.cue}</p>
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted sm:text-base">
+            {pose.cue}
+          </p>
         ) : null}
-        <p className="mt-10 font-display text-6xl font-medium tabular-nums tracking-tight text-amber-bright">
+        <p className="mt-6 font-display text-5xl font-medium tabular-nums tracking-tight text-amber-bright sm:text-6xl">
           {formatClock(timer.remainingMs)}
         </p>
       </div>

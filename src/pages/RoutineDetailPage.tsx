@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { BackLink } from '../components/BackLink'
 import { Button } from '../components/Button'
+import { PoseIllustration } from '../components/PoseIllustration'
 import {
   formatDuration,
   getRoutine,
@@ -31,13 +32,20 @@ export function RoutineDetailPage() {
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">{routine.description}</p>
       </header>
 
-      <ol className="mb-8 flex-1 space-y-3 overflow-y-auto">
+      <ol className="mb-8 flex-1 space-y-2 overflow-y-auto">
         {routine.poses.map((pose, index) => (
-          <li key={pose.id} className="flex gap-3 text-sm">
-            <span className="w-5 shrink-0 text-ink-muted/70">{index + 1}</span>
+          <li key={pose.id} className="flex items-center gap-3 py-2 text-sm">
+            <PoseIllustration
+              imageKey={pose.imageKey}
+              side={pose.side}
+              name={pose.name}
+              size="sm"
+              className="shrink-0"
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="font-medium text-ink">
+                  <span className="mr-2 text-ink-muted/70">{index + 1}</span>
                   {pose.name}
                   {pose.side && pose.side !== 'both' ? (
                     <span className="ml-1.5 font-normal text-ink-muted">({pose.side})</span>

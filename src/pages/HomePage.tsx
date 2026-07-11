@@ -39,6 +39,9 @@ export function HomePage() {
         <p className="pt-3 text-center text-xs text-ink-muted/80">
           Installable · works offline · stored on this device
         </p>
+        <p className="pt-1 text-center text-[10px] text-ink-muted/50">
+          Pose art from Yoga API (CC0)
+        </p>
       </nav>
     </main>
   )
