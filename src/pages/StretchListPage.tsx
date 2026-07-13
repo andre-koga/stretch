@@ -8,16 +8,16 @@ import {
 
 export function StretchListPage() {
   return (
-    <main className="flex flex-1 flex-col py-4">
+    <main className="flex min-h-0 flex-1 flex-col overflow-hidden py-4">
       <BackLink />
-      <header className="animate-fade-up mt-6 mb-8">
+      <header className="animate-fade-up mt-4 mb-5 shrink-0">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Stretch</h1>
         <p className="mt-2 text-ink-muted">
           Pick a theme, then swipe between variations.
         </p>
       </header>
 
-      <ul className="flex flex-col gap-2">
+      <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-2">
         {themes.map((theme, i) => {
           const range = themeDurationRange(theme)
           return (

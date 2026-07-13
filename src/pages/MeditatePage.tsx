@@ -107,14 +107,15 @@ export function MeditatePage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col py-4">
+    <main className="flex min-h-0 flex-1 flex-col overflow-hidden py-4">
       <BackLink />
-      <header className="animate-fade-up mt-6 mb-8">
+      <header className="animate-fade-up mt-4 mb-5 shrink-0">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Meditate</h1>
         <p className="mt-2 text-ink-muted">A quiet timer and a soft soundscape.</p>
       </header>
 
-      <section className="animate-fade-up mb-8">
+      <div className="min-h-0 flex-1 overflow-y-auto pb-3">
+      <section className="animate-fade-up mb-6">
         <h2 className="mb-3 text-sm uppercase tracking-[0.16em] text-ink-muted">Duration</h2>
         <div className="flex flex-wrap gap-2">
           {meditationDurations.map((min) => {
@@ -137,7 +138,7 @@ export function MeditatePage() {
         </div>
       </section>
 
-      <section className="animate-fade-up mb-10" style={{ animationDelay: '80ms' }}>
+      <section className="animate-fade-up mb-4" style={{ animationDelay: '80ms' }}>
         <h2 className="mb-3 text-sm uppercase tracking-[0.16em] text-ink-muted">Sound</h2>
         <ul className="flex flex-col gap-1">
           {sounds.map((sound) => {
@@ -162,8 +163,9 @@ export function MeditatePage() {
           })}
         </ul>
       </section>
+      </div>
 
-      <div className="mt-auto safe-pb">
+      <div className="mt-auto shrink-0 pt-2">
         <Button className="w-full" onClick={() => void start()}>
           Begin
         </Button>
