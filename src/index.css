@@ -24,13 +24,16 @@
 @layer base {
   html {
     height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    min-height: 100%;
-    min-height: 100dvh;
+    height: 100%;
     margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
     font-family: var(--font-sans);
     color: var(--color-ink);
     background: var(--color-moss-deep);
@@ -38,7 +41,8 @@
   }
 
   #root {
-    min-height: 100dvh;
+    height: 100%;
+    overflow: hidden;
   }
 
   button {
@@ -53,11 +57,11 @@
   }
 
   .safe-pb {
-    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
   }
 
   .safe-pt {
-    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
   }
 }
 

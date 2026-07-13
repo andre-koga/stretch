@@ -2,29 +2,29 @@ import { Link } from 'react-router-dom'
 
 export function HomePage() {
   return (
-    <main className="flex min-h-0 flex-1 flex-col overflow-hidden py-3">
-      <div className="animate-fade-up shrink-0 pt-2">
-        <p className="font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+    <main className="flex h-full min-h-0 flex-col overflow-hidden py-2">
+      <div className="animate-fade-up shrink-0">
+        <p className="font-display text-[2.35rem] font-semibold leading-none tracking-tight text-ink sm:text-5xl">
           Ease
         </p>
-        <p className="mt-2 max-w-[17rem] text-base leading-snug text-ink-muted sm:text-lg sm:leading-relaxed">
+        <p className="mt-2 max-w-[17rem] text-[0.95rem] leading-snug text-ink-muted sm:text-lg sm:leading-relaxed">
           Stretch and sit still — offline, on your phone, no account.
         </p>
       </div>
 
-      <div className="relative my-3 flex min-h-0 flex-1 items-center justify-center">
+      <div className="relative my-2 flex min-h-0 flex-1 items-center justify-center">
         <div
           aria-hidden
-          className="animate-breathe absolute h-36 w-36 max-h-[28vh] max-w-[28vh] rounded-full bg-[radial-gradient(circle,rgba(212,165,116,0.35)_0%,rgba(90,122,110,0.2)_45%,transparent_70%)] sm:h-44 sm:w-44"
+          className="animate-breathe absolute size-[min(9.5rem,24svh)] rounded-full bg-[radial-gradient(circle,rgba(212,165,116,0.35)_0%,rgba(90,122,110,0.2)_45%,transparent_70%)]"
         />
         <div
           aria-hidden
-          className="animate-soft-pulse absolute h-24 w-24 max-h-[20vh] max-w-[20vh] rounded-full border border-amber/30 sm:h-32 sm:w-32"
+          className="animate-soft-pulse absolute size-[min(6.5rem,16svh)] rounded-full border border-amber/30"
         />
       </div>
 
       <nav
-        className="animate-fade-up flex shrink-0 flex-col gap-2.5"
+        className="animate-fade-up flex shrink-0 flex-col gap-2"
         style={{ animationDelay: '120ms' }}
       >
         <Link
@@ -39,7 +39,7 @@ export function HomePage() {
         >
           Meditate
         </Link>
-        <p className="pt-1 text-center text-xs text-ink-muted/80">
+        <p className="pt-0.5 text-center text-xs text-ink-muted/80">
           Installable · works offline · stored on this device
         </p>
         <p className="text-center text-[10px] text-ink-muted/50">
