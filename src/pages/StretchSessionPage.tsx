@@ -12,7 +12,7 @@ import { loadPrefs } from '../lib/storage'
 
 const TRANSITION_MS = 5000
 
-type Phase = 'hold' | 'transition'
+type Phase = 'ready' | 'hold' | 'transition'
 
 export function StretchSessionPage() {
   const { themeId, variationId } = useParams()
@@ -24,12 +24,12 @@ export function StretchSessionPage() {
   const sessionTitle = theme && routine ? `${theme.title} · ${routine.label}` : ''
   const themePath = theme ? `/stretch/${theme.id}` : '/stretch'
   const [poseIndex, setPoseIndex] = useState(0)
-  const [phase, setPhase] = useState<Phase>('hold')
+  const [phase, setPhase] = useState<Phase>('ready')
   const [done, setDone] = useState(false)
   const [sessionKey, setSessionKey] = useState(0)
   const chimeOn = useRef(loadPrefs().stretchChime)
   const advancingRef = useRef(false)
-  const phaseRef = useRef<Phase>('hold')
+  const phaseRef = useRef<Phase>('ready')
   const poseIndexRef = useRef(0)
 
   useEffect(() => {
@@ -43,6 +43,15 @@ export function StretchSessionPage() {
   const onTimerComplete = useCallback(() => {
     if (!routine || advancingRef.current) return
     advancingRef.current = true
+
+    if (phaseRef.current === 'ready') {
+      setPhase('hold')
+      phaseRef.current = 'hold'
+      window.setTimeout(() => {
+        advancingRef.current = false
+      }, 50)
+      return
+    }
 
     if (phaseRef.current === 'transition') {
       setPoseIndex((i) => i + 1)
@@ -73,7 +82,10 @@ export function StretchSessionPage() {
   }, [routine])
 
   const timer = useSessionTimer({ onComplete: onTimerComplete })
-  useWakeLock((timer.status === 'running' || phase === 'transition') && !done)
+  useWakeLock(
+    (timer.status === 'running' || phase === 'ready' || phase === 'transition') &&
+      !done,
+  )
 
   const pose = routine?.poses[poseIndex]
   const nextPose =
@@ -112,8 +124,8 @@ export function StretchSessionPage() {
               onClick={() => {
                 setDone(false)
                 setPoseIndex(0)
-                setPhase('hold')
-                phaseRef.current = 'hold'
+                setPhase('ready')
+                phaseRef.current = 'ready'
                 setSessionKey((k) => k + 1)
               }}
             >
@@ -128,10 +140,13 @@ export function StretchSessionPage() {
     )
   }
 
+  const isPrep = phase === 'ready' || phase === 'transition'
   const holdProgress =
     phase === 'hold'
       ? 1 - timer.remainingMs / Math.max(timer.durationMs, 1)
-      : 1
+      : phase === 'ready'
+        ? 0
+        : 1
   const overall = (poseIndex + holdProgress) / routine.poses.length
 
   const elapsedMs = Math.max(0, timer.durationMs - timer.remainingMs)
@@ -146,22 +161,35 @@ export function StretchSessionPage() {
     phaseRef.current = 'hold'
   }
 
+  const startReadyAt = (index: number) => {
+    setPoseIndex(index)
+    setPhase('ready')
+    phaseRef.current = 'ready'
+  }
+
   const goPrev = () => {
+    if (phase === 'ready') {
+      // Restart the headstart countdown
+      timer.start(TRANSITION_MS)
+      return
+    }
     if (phase === 'transition') {
-      // Restart current pose hold instead of going back during switch
       startHoldAt(poseIndex)
       return
     }
     if (poseIndex === 0) {
-      timer.start(pose.durationSec * 1000)
+      startReadyAt(0)
       return
     }
     startHoldAt(poseIndex - 1)
   }
 
   const goNext = () => {
+    if (phase === 'ready') {
+      startHoldAt(poseIndex)
+      return
+    }
     if (phase === 'transition') {
-      // Skip remaining switch time and begin next pose
       if (!nextPose) return
       startHoldAt(poseIndex + 1)
       return
@@ -199,7 +227,13 @@ export function StretchSessionPage() {
 
       <div
         className="animate-fade-up flex flex-1 flex-col items-center justify-center text-center"
-        key={phase === 'transition' ? `switch-${pose.id}` : pose.id}
+        key={
+          phase === 'ready'
+            ? `ready-${pose.id}`
+            : phase === 'transition'
+              ? `switch-${pose.id}`
+              : pose.id
+        }
       >
         <PoseIllustration
           imageKey={showing.imageKey}
@@ -207,21 +241,23 @@ export function StretchSessionPage() {
           alternate={alternate}
           side={showing.side}
           name={showing.name}
-          className={`mb-2 ${phase === 'transition' ? 'opacity-90' : ''}`}
+          className={`mb-2 ${isPrep ? 'opacity-90' : ''}`}
         />
         <p className="text-sm uppercase tracking-[0.18em] text-ink-muted">
-          {phase === 'transition'
+          {isPrep
             ? 'get ready'
             : showing.side && showing.side !== 'both'
               ? showing.side
               : 'hold'}
         </p>
         <h1 className="mt-2 font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-          {phase === 'transition' ? showing.name : pose.name}
+          {showing.name}
         </h1>
-        {phase === 'transition' ? (
+        {isPrep ? (
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted sm:text-base">
-            Take a moment to switch into the next pose.
+            {phase === 'ready'
+              ? 'First pose coming up — get into position.'
+              : 'Take a moment to switch into the next pose.'}
           </p>
         ) : pose.cue ? (
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted sm:text-base">
@@ -246,8 +282,11 @@ export function StretchSessionPage() {
           variant="primary"
           className="h-16 min-w-28 rounded-full px-8 text-lg"
           onClick={() => {
+            if (phase === 'ready') {
+              startHoldAt(poseIndex)
+              return
+            }
             if (phase === 'transition') {
-              // Skip ahead into the next pose
               if (nextPose) startHoldAt(poseIndex + 1)
               return
             }
@@ -255,11 +294,7 @@ export function StretchSessionPage() {
             else timer.resume()
           }}
         >
-          {phase === 'transition'
-            ? 'Skip'
-            : timer.status === 'running'
-              ? 'Pause'
-              : 'Resume'}
+          {isPrep ? 'Skip' : timer.status === 'running' ? 'Pause' : 'Resume'}
         </Button>
         <Button
           variant="control"

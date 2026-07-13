@@ -340,7 +340,8 @@ export function findVariation(
 export function routineDurationSec(routine: { poses: Pose[] }): number {
   const holds = routine.poses.reduce((sum, pose) => sum + pose.durationSec, 0)
   const switches = Math.max(0, routine.poses.length - 1) * 5
-  return holds + switches
+  const headstart = routine.poses.length > 0 ? 5 : 0
+  return holds + switches + headstart
 }
 
 export function themeDurationRange(theme: Theme): { min: number; max: number } {
