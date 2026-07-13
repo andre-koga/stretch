@@ -7,7 +7,7 @@ import { ProgressBar } from '../components/ProgressBar'
 import { playChime } from '../features/audio/ambient'
 import { formatClock, useSessionTimer } from '../features/timer/useSessionTimer'
 import { useWakeLock } from '../features/timer/useWakeLock'
-import { getRoutine } from '../data/routines'
+import { findVariation } from '../data/routines'
 import { loadPrefs } from '../lib/storage'
 
 const TRANSITION_MS = 5000
@@ -15,9 +15,14 @@ const TRANSITION_MS = 5000
 type Phase = 'hold' | 'transition'
 
 export function StretchSessionPage() {
-  const { routineId } = useParams()
+  const { themeId, variationId } = useParams()
   const navigate = useNavigate()
-  const routine = routineId ? getRoutine(routineId) : undefined
+  const match =
+    themeId && variationId ? findVariation(themeId, variationId) : undefined
+  const theme = match?.theme
+  const routine = match?.variation
+  const sessionTitle = theme && routine ? `${theme.title} · ${routine.label}` : ''
+  const themePath = theme ? `/stretch/${theme.id}` : '/stretch'
   const [poseIndex, setPoseIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('hold')
   const [done, setDone] = useState(false)
@@ -87,7 +92,7 @@ export function StretchSessionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poseIndex, routine?.id, done, sessionKey, phase])
 
-  if (!routine || !pose) {
+  if (!theme || !routine || !pose) {
     return (
       <main className="py-8">
         <BackLink to="/stretch" />
@@ -101,7 +106,7 @@ export function StretchSessionPage() {
       <main className="flex flex-1 flex-col items-center justify-center text-center">
         <div className="animate-fade-up">
           <p className="font-display text-4xl font-semibold">Complete</p>
-          <p className="mt-3 text-ink-muted">{routine.title} — well done.</p>
+          <p className="mt-3 text-ink-muted">{sessionTitle} — well done.</p>
           <div className="mt-10 flex flex-col gap-3">
             <Button
               onClick={() => {
@@ -179,7 +184,7 @@ export function StretchSessionPage() {
         <BackLink
           onClick={() => {
             timer.reset()
-            navigate(`/stretch/${routine.id}`)
+            navigate(themePath)
           }}
           label="End"
         />
