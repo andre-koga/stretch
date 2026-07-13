@@ -32,7 +32,7 @@ export function RoutineDetailPage() {
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">{routine.description}</p>
       </header>
 
-      <ol className="mb-8 flex-1 space-y-2 overflow-y-auto">
+      <ol className="mb-6 flex-1 space-y-2 overflow-y-auto">
         {routine.poses.map((pose, index) => (
           <li key={pose.id} className="flex items-center gap-3 py-2 text-sm">
             <PoseIllustration
@@ -59,7 +59,7 @@ export function RoutineDetailPage() {
         ))}
       </ol>
 
-      <div className="sticky bottom-0 bg-gradient-to-t from-moss-deep via-moss-deep to-transparent pt-4 safe-pb">
+      <div className="mt-auto pt-2 safe-pb">
         <Link to={`/stretch/${routine.id}/session`} className="block">
           <Button className="w-full">Begin</Button>
         </Link>
