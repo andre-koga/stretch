@@ -15,11 +15,11 @@ export function HomePage() {
       <div className="relative my-3 flex min-h-0 flex-1 items-center justify-center">
         <div
           aria-hidden
-          className="animate-breathe absolute h-36 w-36 max-h-[30%] max-w-[30%] rounded-full bg-[radial-gradient(circle,rgba(212,165,116,0.35)_0%,rgba(90,122,110,0.2)_45%,transparent_70%)]"
+          className="animate-breathe absolute aspect-square size-56 rounded-full bg-[radial-gradient(circle,rgba(212,165,116,0.35)_0%,rgba(90,122,110,0.2)_45%,transparent_70%)]"
         />
         <div
           aria-hidden
-          className="animate-soft-pulse absolute h-24 w-24 max-h-[22%] max-w-[22%] rounded-full border border-amber/30"
+          className="animate-soft-pulse absolute aspect-square size-40 rounded-full border border-amber/30"
         />
       </div>
 
