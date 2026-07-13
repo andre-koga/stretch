@@ -299,7 +299,9 @@ export function getRoutine(id: string): Routine | undefined {
 }
 
 export function routineDurationSec(routine: Routine): number {
-  return routine.poses.reduce((sum, pose) => sum + pose.durationSec, 0)
+  const holds = routine.poses.reduce((sum, pose) => sum + pose.durationSec, 0)
+  const switches = Math.max(0, routine.poses.length - 1) * 5
+  return holds + switches
 }
 
 export function formatDuration(totalSec: number): string {
